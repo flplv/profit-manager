@@ -2,9 +2,14 @@
 
 Processa as notas de corretagem exportadas da corretora Clear e gera os relatórios de fluxo de caixa, ganhos e posição final. 
 
-Como usar:
+## Dependencias
 
-1) Baixe todas as notas de corretagem na Clear e coloque em uma pasta.
+pip3 install tika
+pip3 install tabulate
+
+## Como usar
+
+1) Baixe todas as notas de corretagem na Clear ou Xp (sem senha) e coloque em uma pasta.
 2) Na mesma pasta crie um arquivo "initial_position.csv" e preencha com as posições iniciais e injeções de desdobramento 
 como a seguir:
 

@@ -1,11 +1,11 @@
 import profit_manager.operation_model as op
-import profit_manager.clear as clear
+import profit_manager.xp_group as xp
 import profit_manager.console as console
 
 
 if __name__ == "__main__":
     database = op.Database.from_file("./initial_position.csv")
-    clear.pdf_parse_from_folder(database, "./")
+    xp.pdf_parse_from_folder(database, "./")
     books = op.Books.from_database(database)
     profits = op.MonthlyResults.from_books(books)
     final_position = op.FinalPosition.from_books(books)

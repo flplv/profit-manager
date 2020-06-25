@@ -1,5 +1,7 @@
+import multiprocessing
 import profit_manager.operation_model as op
-from tika import parser
+import pdfminer.high_level as pdf
+import pdfminer.layout as pdflayout
 import glob
 import re
 
@@ -13,7 +15,6 @@ class Date(op.Date):
         self.month = int(m)
         self.day = int(d)
         return self
-
 
 def sn(s):
     s = s.replace('.', '')
@@ -50,23 +51,26 @@ def process_multiline_text(database: op.Database, date, text):
         database.add(ticket, operation)
 
 
-def pdf_parse_one(database: op.Database, pdf_path):
-    assert(isinstance(database, op.Database))
-
+def extract(pdf_path):
     print("Parsing", pdf_path)
-
-    pages = parser.from_file(pdf_path)['content'].split("Negócios realizados")
-
-    for page in pages:
-        regex_date = r"Data pregão\n\n(.*)"
-        result = re.findall(regex_date, page, re.MULTILINE)
-        if len(result) == 0:
-            continue
-        date = Date.from_string(result[0])
-        filtered_pdf = "\n".join([line for line in page.splitlines() if "1-BOVESPA" in line])
-        process_multiline_text(database, date, filtered_pdf)
+    return pdf.extract_text(pdf_path, laparams=pdflayout.LAParams(char_margin=1000.0)).split("NOTA DE NEGOCIAÇÃO")
 
 
 def pdf_parse_from_folder(database: op.Database, pdf_folder_path):
-    for file in glob.glob("{}/*.pdf".format(pdf_folder_path)):
-        pdf_parse_one(database, file)
+    files = [file for file in glob.glob("{}/*.pdf".format(pdf_folder_path))]
+    nb_cores = multiprocessing.cpu_count()
+    with multiprocessing.Pool(processes=nb_cores) as pool:
+        results = pool.starmap(extract, zip(files))
+
+    date = Date()
+    for result in results:
+        for page in result:
+            regex_date = r"Data pregão\n\n(.*)"
+            result = re.findall(regex_date, page, re.MULTILINE)
+            if len(result) == 0:
+                continue
+            candidate_date = Date.from_string(result[0])
+            if date.to_date_string() != candidate_date.to_date_string():
+                date = candidate_date  # reset the intraday counter only if the date changes
+            filtered_pdf = "\n".join([line for line in page.splitlines() if "1-BOVESPA" in line])
+            process_multiline_text(database, date, filtered_pdf)

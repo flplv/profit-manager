@@ -22,6 +22,9 @@ class Date:
     def __str__(self):
         return "{:04d}-{:02d}-{:02d}-{:02d}".format(self.year, self.month, self.day, self.intraday)
 
+    def to_date_string(self):
+        return "{:04d}-{:02d}-{:02d}".format(self.year, self.month, self.day)
+
     def month_string(self):
         return "{:04d}-{:02d}".format(self.year, self.month)
 
