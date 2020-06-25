@@ -3,6 +3,7 @@ import os
 
 
 class Date:
+    intraday = 0
     day = 0
     month = 0
     year = 0
@@ -10,17 +11,28 @@ class Date:
     @staticmethod
     def from_string(s: str):
         self = Date()
-        y, m, d = s.split("-")
-        self.year = int(y)
-        self.month = int(m)
-        self.day = int(d)
+        l = s.split("-")
+        self.year = int(l[0])
+        self.month = int(l[1])
+        self.day = int(l[2])
+        if len(l) >= 4:
+            self.intraday = int(l[3])
         return self
 
     def __str__(self):
-        return "{:04d}-{:02d}-{:02d}".format(self.year, self.month, self.day)
+        return "{:04d}-{:02d}-{:02d}-{:02d}".format(self.year, self.month, self.day, self.intraday)
 
     def month_string(self):
         return "{:04d}-{:02d}".format(self.year, self.month)
+
+    def intraday_copy(self):
+        d = Date()
+        self.intraday = self.intraday + 1
+        d.intraday = self.intraday
+        d.year = self.year
+        d.month = self.month
+        d.day = self.day
+        return d
 
     def __lt__(self, other):
         assert(isinstance(other, Date))
@@ -101,14 +113,14 @@ class Database(dict):
 
 
 class Books(dict):
-    book_header = ['Ticket', 'Date', 'Op', 'Op Qty', '$ Op Unit', '$ Op Total', 'Purchased Units',
-                   '$ Buy Cost Per Unit', '$ Sell Profit']
+    book_header = ['Ticket', 'Date', 'Op', 'Qty', '$ Unit', '$ Operation', 'Position',
+                   '$ Paid Per Unit', '$ Position', '$ Profit']
     col_map = {
         'ticket': 0,
         'date': 1,
         'purchased_units': 6,
         'paid_per_unit': 7,
-        'profit': 8
+        'profit': 9
     }
 
     def select(self, columns):
@@ -149,21 +161,30 @@ class Books(dict):
             book = []
 
             for date, delta, unit_cost, _ in expanded(operations):
-                cost = unit_cost * delta * -1.0
                 profit = 0.0
+                cost = unit_cost * delta * -1.0
 
-                if delta > 0:  # buy
-                    if (purchased_units + delta) == 0:
-                        book = []
-                        break
+                if delta > 0 and purchased_units >= 0:
+                    quadrant = "buy"
+                elif delta < 0 and purchased_units >= abs(delta):
+                    quadrant = "sell"
+                elif delta < 0 and purchased_units <= 0:
+                    quadrant = "borrow"
+                elif delta > 0 and purchased_units <= abs(delta):
+                    quadrant = "return"
+                else:
+                    quadrant = None
+
+                if not quadrant:
+                    book = []
+                    break
+
+                elif quadrant == "buy" or quadrant == "borrow":
                     total_position_cost = (purchased_units * paid_per_unit) - cost
                     paid_per_unit = total_position_cost / (purchased_units + delta)
 
-                elif delta < 0:  # sell
-                    if purchased_units <= 0.0:
-                        book = []
-                        break
-                    profit = (unit_cost - paid_per_unit) * abs(delta)
+                elif quadrant == "sell" or quadrant == "return":
+                    profit = (unit_cost - paid_per_unit) * delta * -1.0
 
                 purchased_units = purchased_units + delta
 
@@ -175,6 +196,7 @@ class Books(dict):
                              cost,
                              purchased_units,
                              paid_per_unit,
+                             purchased_units * paid_per_unit,
                              profit))
 
             self[ticket] = book

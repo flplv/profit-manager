@@ -37,3 +37,14 @@ Arquivos vão ser gerados:
 (tanto o database.csv ou o final_position.csv podem ser usados como ponto de partida)
 
 Divirta-se, e... viva o leão!
+
+
+## TODO
+
+### short avançado
+Operações de short não foram testadas o suficiente. Para shorts básicos 
+funciona ok.
+
+Shorts básicos são operações que não executaram troca de quadrante, e sim
+primeiro a posição vai a zero e depois outra operação é que inverte 
+o saldo de ações para positivo ou negativo.

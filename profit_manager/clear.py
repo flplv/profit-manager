@@ -32,7 +32,7 @@ def process_multiline_text(database: op.Database, date, text):
     for operation_number, match in enumerate(matches, start=1):
 
         is_sell = True if match.group(1) == "V" else False
-        ticket = match.group(2)
+        ticket = match.group(2).replace("FRACIONARIO", "VISTA")
         quantity = int(sn(match.group(3)))
         cost = float(sn(match.group(4)))
         total = float(sn(match.group(5)))
@@ -42,7 +42,7 @@ def process_multiline_text(database: op.Database, date, text):
             print(" ", match.group())
             print(" Computed total was", cost * quantity)
 
-        operation = op.Operation(date,
+        operation = op.Operation(date.intraday_copy(),
                                  -quantity if is_sell else quantity,
                                  cost,
                                  match.group())

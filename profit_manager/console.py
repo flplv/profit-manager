@@ -9,7 +9,10 @@ def print_books(books: op.Books):
         print()
         print(tabulate(books[ticket], books.book_header))
         if len(book) == 0:
-            print("Table is empty because tried to sell more than it had, check initial conditions.")
+            print("Table is empty because an non supported operation was detected,"
+                  " check the database.csv for quadrant changes.")
+        else:
+            print("              Total profit:", sum([t[-1] for t in books[ticket]]))
         print()
     print()
 
@@ -47,6 +50,6 @@ def print_database_pretty(database: op.Database,  title: str):
     for ticket, operations in sorted(database.items()):
         entry = [(ticket, date, qty, cost, qty * cost) for date, qty, cost, document in op.expanded(operations)]
         table = table + entry
+
     print(tabulate(table, headers=['Ticket', 'Date', 'Quantity', 'Unit Cost', 'Total']))
-
-
+    print("                                      Total:", sum([t[-1] for t in table]))
