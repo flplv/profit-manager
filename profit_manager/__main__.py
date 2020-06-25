@@ -8,12 +8,14 @@ if __name__ == "__main__":
     xp.pdf_parse_from_folder(database, "./")
     books = op.Books.from_database(database)
     profits = op.MonthlyResults.from_books(books)
+    sales = op.MonthlySales.from_books(books)
     final_position = op.FinalPosition.from_books(books)
 
     console.print_database(database, "All operations")
 
     console.print_books(books)
     console.print_monthly_profits(profits)
+    console.print_monthly_sales(sales)
     console.print_database_pretty(final_position, "Final position")
 
     database.save_to_file("./database.csv")

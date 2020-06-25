@@ -35,6 +35,25 @@ def print_monthly_profits(profits: op.Books):
     print()
 
 
+def print_monthly_sales(sales: op.Books):
+    year_profit = 0
+
+    for k in sorted(sales):
+        v = sales[k]
+        v.sort(key=lambda x: x[0])
+        total_sales = sum([t[2] for t in v])
+        year_profit += total_sales
+        print("Monthly sales for", k)
+        print(tabulate(v, headers=['Date', 'Ticket', 'Profit']))
+        print("          Month total profit:", total_sales)
+        print()
+
+    print("Total profit:", year_profit)
+    print()
+    print()
+
+
+
 def print_database(database: op.Database, title: str):
     print("Database export for", title)
     output = io.StringIO()

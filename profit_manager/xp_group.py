@@ -16,6 +16,7 @@ class Date(op.Date):
         self.day = int(d)
         return self
 
+
 def sn(s):
     s = s.replace('.', '')
     s = s.replace(',', '.')

@@ -121,6 +121,7 @@ class Books(dict):
     col_map = {
         'ticket': 0,
         'date': 1,
+        'operation': 5,
         'purchased_units': 6,
         'paid_per_unit': 7,
         'profit': 9
@@ -219,7 +220,21 @@ class MonthlyResults(dict):
             if month_string not in self:
                 self[month_string] = []
             self[month_string].append((date, ticket, profit))
+        return self
 
+
+class MonthlySales(dict):
+
+    @staticmethod
+    def from_books(books: Books):
+        self = MonthlyResults()
+        for date, ticket, operation in sorted(books.select(['date', 'ticket', 'operation']), key=lambda x: x[0]):
+            if operation <= 0:
+                continue
+            month_string = date.month_string()
+            if month_string not in self:
+                self[month_string] = []
+            self[month_string].append((date, ticket, operation))
         return self
 
 
