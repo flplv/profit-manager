@@ -1,0 +1,39 @@
+## Profit Manager
+
+Processa as notas de corretagem exportadas da corretora Clear e gera os relatórios de fluxo de caixa, ganhos e posição final. 
+
+Como usar:
+
+1) Baixe todas as notas de corretagem na Clear e coloque em uma pasta.
+2) Na mesma pasta crie um arquivo "initial_position.csv" e preencha com as posições iniciais e injeções de desdobramento 
+como a seguir:
+
+```
+  "VISTA VIAVAREJO"     , "2019-01-00", 100,   5.01, "p. inicial"
+  "VISTA GUARARAPES"    , "2019-05-02", 1000,  0.00, "desdobramento"
+```
+Os campos do CSV são respectivamente:
+
+    1. Nome da maneira que é exportada da nota de corretagem
+    2. Data YYYY-MM-DD
+    3. Número de ações (Positivo para compra ou negativo para venda)
+    4. Custo da unidade na operação
+    5. Uma anotação textual para debug
+
+3) Agora execute o programa na pasta em que os arquivos foram salvos e gerados:
+
+```
+$ PYTHONPATH=$PYTHONPATH:/path/to/install/dir python3 /path/to/install/dir/profit_manager
+```
+
+Observe a mensagens no console, verifique bem os números para ter certeza que as condições iniciais estão corretas 
+e que os PDFs foram carregados corretamente.
+
+Arquivos vão ser gerados: 
+
+- database.csv, para debug
+- final_position.csv, para ser usado no ano seguinte ou mês seguinte caso você precise de diferentes períodos de condição inicial
+
+(tanto o database.csv ou o final_position.csv podem ser usados como ponto de partida)
+
+Divirta-se, e... viva o leão!
