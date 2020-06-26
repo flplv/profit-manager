@@ -41,8 +41,8 @@ def print_monthly_sales(sales: op.Books):
         v.sort(key=lambda x: x[0])
         total_sales = sum([t[2] for t in v])
         print("Monthly sales for", k)
-        print(tabulate(v, headers=['Date', 'Ticket', 'Profit']))
-        print("          Month total profit:", total_sales)
+        print(tabulate(v, headers=['Date', 'Ticket', 'Sales']))
+        print("          Month total sales:", total_sales)
         print()
     print()
 
