@@ -1,6 +1,6 @@
 ## Profit Manager
 
-Processa as notas de corretagem exportadas da corretora Clear e gera os relatórios de fluxo de caixa, ganhos e posição final. 
+Processa as notas de corretagem exportadas das corretoras Clear, XP e Itaú (solicite suporte para a sua corretora via issues) e gera os relatórios de fluxo de caixa, ganhos e posição final. 
 
 ## Dependencias
 
@@ -53,3 +53,6 @@ funciona ok.
 Shorts básicos são operações que não executaram troca de quadrante, e sim
 primeiro a posição vai a zero e depois outra operação é que inverte 
 o saldo de ações para positivo ou negativo.
+
+### duplicação de notas
+As notas são parseadas às cegas, sem verificar o número da nota contra operação duplicada. 
