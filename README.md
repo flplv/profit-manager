@@ -4,8 +4,8 @@ Processa as notas de corretagem exportadas das corretoras Clear, XP e Itaú (sol
 
 ## Dependencias
 
-pip3 install tika
-pip3 install tabulate
+* pip3 install pdfminer.six
+* pip3 install tabulate
 
 ## Como usar
 
@@ -56,3 +56,8 @@ o saldo de ações para positivo ou negativo.
 
 ### duplicação de notas
 As notas são parseadas às cegas, sem verificar o número da nota contra operação duplicada. 
+
+### Taxas de operação
+As taxas não são descontadas dos lucros, nem computadas ou apresentadas nos relatórios.
+Em tese, essas taxas poderiam ser descontadas dos lucros antes de pagar impostos, portanto
+TODO.
